@@ -4,13 +4,9 @@ import (
 	"food_delivery/component/appctx"
 	"food_delivery/component/uploadprovider"
 	"food_delivery/middleware"
-	"food_delivery/module/restaurant/transport/ginrestaurant"
-	"food_delivery/module/upload/transport/ginupload"
-	"food_delivery/module/user/usertransport/ginuser"
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -74,67 +70,11 @@ func main() {
 
 	r.Static("/static", "./static")
 	//****** POST ******
-
 	v1 := r.Group("/v1")
-	v1.POST("/upload", ginupload.Upload(appContext))
-	v1.POST("/register", ginuser.Register(appContext))
-	v1.POST("/authenticate", ginuser.LoginHandler(appContext))
-	v1.POST("/profile", middleware.RequiredAuth(appContext), ginuser.Profile(appContext))
 
-	restaurant := v1.Group("/restaurants", middleware.RequiredAuth(appContext))
+	setUpRoutes(appContext, v1)
+	setUpAdminRoutes(appContext, v1)
 
-	restaurant.POST("/", ginrestaurant.CreateRestaurant(appContext))
-
-	restaurant.GET("/:id", func(c *gin.Context) {
-		id, err := strconv.Atoi(c.Param("id"))
-
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-
-			return
-		}
-
-		var data Restaurant
-
-		db.Where("id = ?", id).First(&data)
-
-		c.JSON(http.StatusOK, gin.H{
-			"data": data,
-		})
-	})
-
-	restaurant.GET("/", ginrestaurant.ListRestaurant(appContext))
-
-	restaurant.DELETE("/:id", ginrestaurant.DeleteRestaurant(appContext))
-
-	restaurant.PATCH("/:id", func(c *gin.Context) {
-		id, err := strconv.Atoi(c.Param("id"))
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-
-			return
-		}
-
-		var data RestaurantUpdate
-
-		if err := c.ShouldBind(&data); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-
-			return
-		}
-
-		db.Where("id = ?", id).Updates(&data)
-
-		c.JSON(http.StatusOK, gin.H{
-			"data": "Update Successfully",
-		})
-	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 
 	// +++++++++++++++++++++++ DEMO GORM *******************

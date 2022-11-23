@@ -20,12 +20,16 @@ func (s *sqlStore) ListDataWithCondition(
 
 	if filter != nil {
 		if filter.OwnerId > 0 {
-			db = db.Where("owner_id = ?", filter.OwnerId)
+			db = db.Where("user_id = ?", filter.OwnerId)
 		}
 	}
 
 	if err := db.Count(&paging.Total).Error; err != nil {
 		return nil, common.ErrDB(err)
+	}
+
+	for i := range moreKeys {
+		db = db.Preload(moreKeys[i])
 	}
 
 	if v := paging.FakeCursor; v != "" {

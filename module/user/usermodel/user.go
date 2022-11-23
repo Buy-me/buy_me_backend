@@ -12,7 +12,7 @@ type User struct {
 	LastName        string        `json:"last_name" gorm:"column:last_name;"`
 	FirstName       string        `json:"first_name" gorm:"column:first_name;"`
 	Phone           string        `json:"phone" gorm:"column:phone;"`
-	Role            string        `json:"role" gorm:"column:roles;type:ENUM('user', 'admin')"`
+	Role            string        `json:"role" gorm:"column:role;type:ENUM('user', 'admin')"`
 	Avatar          *common.Image `json:"avatar,omitempty" gorm:"column:avatar;type:json"`
 }
 

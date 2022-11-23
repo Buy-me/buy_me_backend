@@ -14,11 +14,13 @@ const EntityName = "Restaurant"
 
 type Restaurant struct {
 	common.SQLModel `json:",inline"`
-	Name            string         `json:"name" gorm:"column:name;"`
-	Addr            string         `json:"addr" gorm:"column:addr;"`
-	Type            RestaurantType `json:"type" gorm:"column:type;"`
-	Logo            *common.Image  `json:"logo" gorm:"column:logo;"`
-	Cover           *common.Images `json:"cover" gorm:"column:cover;"`
+	Name            string             `json:"name" gorm:"column:name;"`
+	Addr            string             `json:"addr" gorm:"column:addr;"`
+	Type            RestaurantType     `json:"type" gorm:"column:type;"`
+	Logo            *common.Image      `json:"logo" gorm:"column:logo;"`
+	Cover           *common.Images     `json:"cover" gorm:"column:cover;"`
+	UserId          int                `json:"-" gorm:"column:user_id;"`
+	User            *common.SimpleUser `json:"user" gorm:"preload:false;"`
 }
 
 func (Restaurant) TableName() string {
@@ -64,6 +66,10 @@ func (data *RestaurantCreate) Validate() error {
 // Mask
 func (r *Restaurant) Mask(isAdminOrOwner bool) {
 	r.GenUID(common.DbTypeRestaurant)
+
+	if u := r.User; u != nil {
+		u.Mask(isAdminOrOwner)
+	}
 }
 
 func (data *RestaurantCreate) Mask(isAdminOrOwner bool) {

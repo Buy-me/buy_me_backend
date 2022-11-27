@@ -4,7 +4,6 @@ import (
 	"context"
 	"food_delivery/common"
 	restaurantmodel "food_delivery/module/restaurant/model"
-	"log"
 )
 
 type LikeRestaurantStore interface {
@@ -45,22 +44,22 @@ func (biz *listRestaurantBiz) ListRestaurant(
 		return nil, err
 	}
 
-	ids := make([]int, len(result))
+	// ids := make([]int, len(result))
 
-	for i := range result {
-		ids[i] = result[i].Id
-	}
+	// for i := range result {
+	// 	ids[i] = result[i].Id
+	// }
 
-	likeMap, err := biz.likeStore.GetRestaurantLikes(context, ids)
+	// likeMap, err := biz.likeStore.GetRestaurantLikes(context, ids)
 
-	if err != nil {
-		log.Println("Something went wrong")
-		return result, nil
-	}
+	// if err != nil {
+	// 	log.Println("Something went wrong")
+	// 	return result, nil
+	// }
 
-	for i, item := range result {
-		result[i].LikedCount = likeMap[item.Id]
-	}
+	// for i, item := range result {
+	// 	result[i].LikedCount = likeMap[item.Id]
+	// }
 
 	return result, nil
 }

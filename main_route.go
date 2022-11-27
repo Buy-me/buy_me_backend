@@ -4,6 +4,7 @@ import (
 	"food_delivery/component/appctx"
 	"food_delivery/middleware"
 	"food_delivery/module/restaurant/transport/ginrestaurant"
+	"food_delivery/module/restaurantlike/restaurantliketransport/ginrestaurantlike"
 	"food_delivery/module/upload/transport/ginupload"
 	"food_delivery/module/user/usertransport/ginuser"
 	"net/http"
@@ -75,4 +76,10 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 		})
 	})
 
+	
+	restaurant.POST("/:id/like", ginrestaurantlike.UserLikeRestaurant(appContext))
+	restaurant.DELETE("/:id/unlike", ginrestaurantlike.UserUnlikeRestaurant(appContext))
+	restaurant.GET("/:id/liked-users", ginrestaurantlike.ListUsersLikeRestaurant(appContext))
+
+	// v1/restaurants/:id/liked-users
 }

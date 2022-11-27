@@ -2,9 +2,16 @@ package restaurantlikestorage
 
 import (
 	"context"
+	"fmt"
 	"food_delivery/common"
 	"food_delivery/module/restaurantlike/restaurantlikemodel"
+	"strings"
+	"time"
+
+	"github.com/btcsuite/btcd/btcutil/base58"
 )
+
+const timeLayout = "2006-01-02T15:04:05.999999"
 
 func (s *sqlStore) GetRestaurantLikes(ctx context.Context, ids []int) (map[int]int, error) {
 	result := make(map[int]int)
@@ -25,66 +32,67 @@ func (s *sqlStore) GetRestaurantLikes(ctx context.Context, ids []int) (map[int]i
 	return result, nil
 }
 
-// func (s *sqlStore) GetUsersLikeRestaurant(
-// 	ctx context.Context,
-// 	conditions map[string]interface{},
-// 	filter *restaurantlikemodel.Filter,
-// 	paging *common.Paging,
-// 	order *common.Order,
-// 	moreKeys ...string,
-// ) ([]common.SimpleUser, error) {
-// 	var restaurantLikes []restaurantlikemodel.RestaurantLike
+func (s *sqlStore) GetUsersLikeRestaurant(
+	ctx context.Context,
+	conditions map[string]interface{},
+	filter *restaurantlikemodel.Filter,
+	paging *common.Paging,
+	// order *common.Order,
+	moreKeys ...string,
+) ([]common.SimpleUser, error) {
+	var result []restaurantlikemodel.RestaurantLike
 
-// 	db := s.db
+	db := s.db
 
-// 	db = db.Table(restaurantlikemodel.RestaurantLike{}.TableName()).Where(conditions)
-// 	if filter != nil {
-// 		if filter.RestaurantId > 0 {
-// 			db = db.Where("restaurant_id = ?", filter.RestaurantId)
-// 		}
-// 	}
+	db = db.Table(restaurantlikemodel.RestaurantLike{}.TableName()).Where(conditions)
 
-// 	if err := db.Count(&paging.Total).Error; err != nil {
-// 		return nil, common.ErrDB(err)
-// 	}
+	if filter != nil {
+		if filter.RestaurantId > 0 {
+			db = db.Where("restaurant_id = ?", filter.RestaurantId)
+		}
+	}
 
-// 	db = db.Preload("User")
+	if err := db.Count(&paging.Total).Error; err != nil {
+		return nil, common.ErrDB(err)
+	}
 
-// 	if v := paging.FakeCursor; v != "" {
-// 		timeCreated, err := time.Parse(common.TimeFormat, string(base58.Decode(v)))
+	db = db.Preload("User")
 
-// 		if err != nil {
-// 			return nil, common.ErrDB(err)
-// 		}
+	if v := paging.FakeCursor; v != "" {
+		// timeCreated, err := time.Parse(common.TimeFormat, string(base58.Decode(v)))
+		timeCreated, err := time.Parse(timeLayout, string(base58.Decode(v)))
+		parts := strings.Split(timeCreated.String(), " ")
 
-// 		db = db.Where("created_at < ?", timeCreated.Format(common.TimeFormat))
-// 	} else {
-// 		db = db.Offset((paging.Page - 1) * paging.Limit)
-// 	}
+		if err != nil {
+			return nil, common.ErrDB(err)
+		}
 
-// 	if err := db.
-// 		Limit(paging.Limit).
-// 		Order("created_at desc").
-// 		Find(&restaurantLikes).Error; err != nil {
-// 		return nil, common.ErrDB(err)
+		db = db.Where("created_at < ?", fmt.Sprintf("%v %v", parts[0], parts[1]))
 
-// 	}
+	} else {
+		db = db.Offset((paging.Page - 1) * paging.Limit)
+	}
 
-// 	usersLike := make([]common.SimpleUser, len(restaurantLikes))
+	if err := db.
+		Limit(paging.Limit).
+		Order("created_at desc").
+		Find(&result).Error; err != nil {
+		return nil, common.ErrDB(err)
+	}
 
-// 	for i, restaurantLike := range restaurantLikes {
-// 		userLike := restaurantLikes[i].User
-// 		if userLike != nil {
-// 			userLike.CreatedAt = restaurantLike.CreatedAt
-// 			userLike.UpdatedAt = nil
-// 			usersLike[i] = *userLike
-// 		}
-// 		if i == len(restaurantLikes)-1 {
-// 			sprintf := fmt.Sprintf("%v", restaurantLike.CreatedAt.Format(common.TimeFormat))
-// 			bytes := []byte(sprintf)
-// 			paging.NextCursor = base58.Encode(bytes)
-// 		}
-// 	}
+	fmt.Println("==========", result, "================")
 
-// 	return usersLike, nil
-// }
+	usersLike := make([]common.SimpleUser, len(result))
+
+	for i, item := range result {
+		result[i].User.CreatedAt = item.CreatedAt
+		result[i].User.UpdatedAt = nil
+		usersLike[i] = *result[i].User
+
+		if i == len(result)-1 {
+			cursorStr := base58.Encode([]byte(fmt.Sprintf("%v", item.CreatedAt.Format(timeLayout))))
+			paging.NextCursor = cursorStr
+		}
+	}
+	return usersLike, nil
+}

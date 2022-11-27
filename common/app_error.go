@@ -3,6 +3,7 @@ package common
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -13,6 +14,12 @@ type AppError struct {
 	Message    string `json:"message"`   //show client
 	Log        string `json:"log"`       // log cho dev , ví dụ lỗi db
 	Key        string `json:"error_key"` //key cho da ngon ngu
+}
+
+func AppRecover() {
+	if err := recover(); err != nil {
+		log.Println("Recovery error:", err)
+	}
 }
 
 func NewErrorResponse(root error, msg, log, key string) *AppError {

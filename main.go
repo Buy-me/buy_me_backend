@@ -4,6 +4,8 @@ import (
 	"food_delivery/component/appctx"
 	"food_delivery/component/uploadprovider"
 	"food_delivery/middleware"
+	localpubsub "food_delivery/pubsub/local"
+	"food_delivery/subscriber"
 	"log"
 	"net/http"
 	"os"
@@ -38,11 +40,11 @@ func main() {
 	err := godotenv.Load()
 
 	dsn := os.Getenv("MYSQL_CONNECTION")
-	s3BucketName := os.Getenv("S3BucketName")
-	s3Region := os.Getenv("S3Region")
-	s3APIKey := os.Getenv("S3APIKey")
-	s3SecretKey := os.Getenv("S3SecretKey")
-	s3Domain := os.Getenv("S3Domain")
+	s3BucketName := os.Getenv("S3BUCKETNAME")
+	s3Region := os.Getenv("S3REGION")
+	s3APIKey := os.Getenv("S3APIKEY")
+	s3SecretKey := os.Getenv("S3SECRETKEY")
+	s3Domain := os.Getenv("S3DOMAIN")
 	secretKey := os.Getenv("SYSTEM_SECRET")
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
@@ -55,8 +57,15 @@ func main() {
 
 	log.Println(s3BucketName, s3Region, s3APIKey, s3SecretKey, s3Domain)
 	s3Provider := uploadprovider.NewS3Provider(s3BucketName, s3Region, s3APIKey, s3SecretKey, s3Domain)
+	ps := localpubsub.NewPubSub()
 
-	appContext := appctx.NewAppContext(db, s3Provider, secretKey)
+	appContext := appctx.NewAppContext(db, s3Provider, secretKey, ps)
+
+	// Run Pubsub
+	// set up subcribers
+
+	// subscriber.Setup(appContext, context.Background())
+	_ = subscriber.NewEngine(appContext).Start()
 
 	// **************** DEMO GIN REACT API *********************
 	r := gin.Default()
@@ -64,11 +73,25 @@ func main() {
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
+			"message":          "pong",
+			"s3BucketName":     s3BucketName,
+			"MYSQL_CONNECTION": dsn,
+			"s3Region":         s3Region,
+			"s3APIKey":         s3APIKey,
+			"s3SecretKey":      s3SecretKey,
+			"s3Domain":         s3Domain,
+			"secretKey":        secretKey,
+		})
+	})
+
+	r.GET("/test-deploy", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Deploy Successfully",
 		})
 	})
 
 	r.Static("/static", "./static")
+
 	//****** POST ******
 	v1 := r.Group("/v1")
 

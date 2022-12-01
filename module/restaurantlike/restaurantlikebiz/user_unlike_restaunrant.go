@@ -2,8 +2,9 @@ package restaurantlikebiz
 
 import (
 	"context"
-	"food_delivery/component/asyncjob"
+	"food_delivery/common"
 	"food_delivery/module/restaurantlike/restaurantlikemodel"
+	"food_delivery/pubsub"
 	"log"
 )
 
@@ -16,20 +17,20 @@ type DecreaseLikeCountStore interface {
 }
 
 type userUnlikeRestaurantBiz struct {
-	store    UserUnlikeRestaurantStore
-	decStore DecreaseLikeCountStore
-	// pubsub pubsub.Pubsub
+	store UserUnlikeRestaurantStore
+	// decStore DecreaseLikeCountStore
+	pubsub pubsub.Pubsub
 }
 
 func NewUserUnlikeRestaurantBiz(
 	store UserUnlikeRestaurantStore,
-	decStore DecreaseLikeCountStore,
-	// pubsub pubsub.Pubsub,
+	// decStore DecreaseLikeCountStore,
+	pubsub pubsub.Pubsub,
 ) *userUnlikeRestaurantBiz {
 	return &userUnlikeRestaurantBiz{
-		store:    store,
-		decStore: decStore,
-		// pubsub: pubsub,
+		store: store,
+		// decStore: decStore,
+		pubsub: pubsub,
 	}
 }
 
@@ -46,40 +47,23 @@ func (biz *userUnlikeRestaurantBiz) UnlikeRestaurant(
 		return restaurantlikemodel.ErrCannotUnlikeRestaurant(err)
 	}
 
-	// side effect:
-	// vì nó không ảnh hưởng đến flow chính trong api list restaurant
-	j := asyncjob.NewJob(func(ctx context.Context) error {
-		return biz.decStore.DecreaseLikeCount(ctx, restaurantId)
-	})
-
-	if err := asyncjob.NewGroup(true, j).Run(ctx); err != nil {
+	// Send Message
+	if err := biz.pubsub.Publish(ctx, common.TopicUserUnLikeRestaurant, pubsub.NewMessage(
+		&restaurantlikemodel.RestaurantLike{
+			RestaurantId: restaurantId,
+		})); err != nil {
 		log.Println(err)
 	}
 
-	// go func() {
-	// 	defer common.AppRecover()
-	// 	if err := biz.decStore.DecreaseLikeCount(ctx, restaurantId); err != nil {
-	// 		log.Println(err)
-	// 	}
-	// }()
+	// side effect:
+	// vì nó không ảnh hưởng đến flow chính trong api list restaurant
+	// j := asyncjob.NewJob(func(ctx context.Context) error {
+	// 	return biz.decStore.DecreaseLikeCount(ctx, restaurantId)
+	// })
 
-	////// side effect
-	//
-	//go func() {
-	//	defer common.AppRecover()
-	//	job := asyncjob.NewJob(func(ctx context.Context) error {
-	//		return biz.decStore.DecreaseLikeCount(ctx, restaurantId)
-	//	})
-	//
-	//	//job.SetRetryDurations([]time.Duration{time.Second * 3})
-	//
-	//	_ = asyncjob.NewGroup(true, job).Run(ctx)
-	//}()
-
-	// biz.pubsub.Publish(ctx, common.TopicUserDislikeRestaurant, pubsub.NewMessage(&restaurantlikemodel.RestaurantLike{
-	// 	RestaurantId: restaurantId,
-	// 	UserId:       userId,
-	// }))
+	// if err := asyncjob.NewGroup(true, j).Run(ctx); err != nil {
+	// 	log.Println(err)
+	// }
 
 	return nil
 }

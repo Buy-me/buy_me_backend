@@ -2,8 +2,9 @@ package restaurantlikebiz
 
 import (
 	"context"
-	"food_delivery/component/asyncjob"
+	"food_delivery/common"
 	"food_delivery/module/restaurantlike/restaurantlikemodel"
+	"food_delivery/pubsub"
 	"log"
 )
 
@@ -16,18 +17,17 @@ type IncreaseLikeCountStore interface {
 }
 
 type userLikeRestaurantBiz struct {
-	store    UserLikeRestaurantStore
-	incStore IncreaseLikeCountStore
-	// pubsub pubsub.Pubsub
+	store UserLikeRestaurantStore
+	// incStore IncreaseLikeCountStore
+	pubsub pubsub.Pubsub
 }
 
-func NewUserLikeRestaurantBiz(store UserLikeRestaurantStore, incStore IncreaseLikeCountStore,
-
-// pubsub pubsub.Pubsub,
+func NewUserLikeRestaurantBiz(
+	store UserLikeRestaurantStore,
+	// incStore IncreaseLikeCountStore,
+	pubsub pubsub.Pubsub,
 ) *userLikeRestaurantBiz {
-	return &userLikeRestaurantBiz{store: store, incStore: incStore} //incStore: incStore,
-	// pubsub: pubsub,
-
+	return &userLikeRestaurantBiz{store: store /*incStore: incStore,*/, pubsub: pubsub}
 }
 
 func (biz *userLikeRestaurantBiz) LikeRestaurant(
@@ -42,25 +42,21 @@ func (biz *userLikeRestaurantBiz) LikeRestaurant(
 		return restaurantlikemodel.ErrCannotLikeRestaurant(err)
 	}
 
-	j := asyncjob.NewJob(func(ctx context.Context) error {
-		return biz.incStore.IncreaseLikeCount(ctx, data.RestaurantId)
-	})
-
-	if err := asyncjob.NewGroup(true, j).Run(ctx); err != nil {
+	// Send Message
+	if err := biz.pubsub.Publish(ctx, common.TopicUserLikeRestaurant, pubsub.NewMessage(data)); err != nil {
 		log.Println(err)
 	}
 
 	//// side effect
+	// j := asyncjob.NewJob(func(ctx context.Context) error {
+	// 	return biz.incStore.IncreaseLikeCount(ctx, data.RestaurantId)
+	// })
 
-	//job := asyncjob.NewJob(func(ctx context.Context) error {
-	//	return biz.incStore.IncreaseLikeCount(ctx, data.RestaurantId)
-	//})
-	//
-	//_ = asyncjob.NewGroup(true, job).Run(ctx)
+	// if err := asyncjob.NewGroup(true, j).Run(ctx); err != nil {
+	// 	log.Println(err)
+	// }
 
 	// New solution: Use pub/sub
-
-	// biz.pubsub.Publish(ctx, common.TopicUserLikeRestaurant, pubsub.NewMessage(data))
 
 	return nil
 }

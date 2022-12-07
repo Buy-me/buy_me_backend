@@ -3,6 +3,7 @@ package main
 import (
 	"food_delivery/component/appctx"
 	"food_delivery/middleware"
+	"food_delivery/module/food/foodtransport/ginfood"
 	"food_delivery/module/restaurant/transport/ginrestaurant"
 	"food_delivery/module/restaurantlike/restaurantliketransport/ginrestaurantlike"
 	"food_delivery/module/upload/transport/ginupload"
@@ -22,64 +23,65 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 	v1.GET("/profile", middleware.RequiredAuth(appContext), ginuser.Profile(appContext))
 
 	restaurant := v1.Group("/restaurants", middleware.RequiredAuth(appContext))
+	{
 
-	restaurant.POST("/", ginrestaurant.CreateRestaurant(appContext))
+		restaurant.POST("/", ginrestaurant.CreateRestaurant(appContext))
+		restaurant.GET("/:id", func(c *gin.Context) {
+			id, err := strconv.Atoi(c.Param("id"))
 
-	restaurant.GET("/:id", func(c *gin.Context) {
-		id, err := strconv.Atoi(c.Param("id"))
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": err.Error(),
+				})
 
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
+				return
+			}
+
+			var data Restaurant
+
+			db.Where("id = ?", id).First(&data)
+
+			c.JSON(http.StatusOK, gin.H{
+				"data": data,
 			})
-
-			return
-		}
-
-		var data Restaurant
-
-		db.Where("id = ?", id).First(&data)
-
-		c.JSON(http.StatusOK, gin.H{
-			"data": data,
 		})
-	})
+		restaurant.GET("/", ginrestaurant.ListRestaurant(appContext))
+		restaurant.DELETE("/:id", ginrestaurant.DeleteRestaurant(appContext))
+		restaurant.PATCH("/:id", func(c *gin.Context) {
+			id, err := strconv.Atoi(c.Param("id"))
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": err.Error(),
+				})
 
-	restaurant.GET("/", ginrestaurant.ListRestaurant(appContext))
+				return
+			}
 
-	restaurant.DELETE("/:id", ginrestaurant.DeleteRestaurant(appContext))
+			var data RestaurantUpdate
 
-	restaurant.PATCH("/:id", func(c *gin.Context) {
-		id, err := strconv.Atoi(c.Param("id"))
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
+			if err := c.ShouldBind(&data); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": err.Error(),
+				})
+
+				return
+			}
+
+			db.Where("id = ?", id).Updates(&data)
+
+			c.JSON(http.StatusOK, gin.H{
+				"data": "Update Successfully",
 			})
-
-			return
-		}
-
-		var data RestaurantUpdate
-
-		if err := c.ShouldBind(&data); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-
-			return
-		}
-
-		db.Where("id = ?", id).Updates(&data)
-
-		c.JSON(http.StatusOK, gin.H{
-			"data": "Update Successfully",
 		})
-	})
+		restaurant.POST("/:id/like", ginrestaurantlike.UserLikeRestaurant(appContext))
+		restaurant.DELETE("/:id/unlike", ginrestaurantlike.UserUnlikeRestaurant(appContext))
+		restaurant.GET("/:id/liked-users", ginrestaurantlike.ListUsersLikeRestaurant(appContext))
+	}
 
-	
-	restaurant.POST("/:id/like", ginrestaurantlike.UserLikeRestaurant(appContext))
-	restaurant.DELETE("/:id/unlike", ginrestaurantlike.UserUnlikeRestaurant(appContext))
-	restaurant.GET("/:id/liked-users", ginrestaurantlike.ListUsersLikeRestaurant(appContext))
+	food := v1.Group("/foods", middleware.RequiredAuth(appContext))
+	{
+		food.POST("/", ginfood.CreateFood(appContext))
+	}
 
 	// v1/restaurants/:id/liked-users
 }

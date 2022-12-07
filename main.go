@@ -55,7 +55,6 @@ func main() {
 
 	db = db.Debug()
 
-	log.Println(s3BucketName, s3Region, s3APIKey, s3SecretKey, s3Domain)
 	s3Provider := uploadprovider.NewS3Provider(s3BucketName, s3Region, s3APIKey, s3SecretKey, s3Domain)
 	ps := localpubsub.NewPubSub()
 
@@ -73,14 +72,7 @@ func main() {
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"message":          "pong",
-			"s3BucketName":     s3BucketName,
-			"MYSQL_CONNECTION": dsn,
-			"s3Region":         s3Region,
-			"s3APIKey":         s3APIKey,
-			"s3SecretKey":      s3SecretKey,
-			"s3Domain":         s3Domain,
-			"secretKey":        secretKey,
+			"message": "pong",
 		})
 	})
 

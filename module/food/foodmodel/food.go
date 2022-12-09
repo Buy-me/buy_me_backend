@@ -48,6 +48,17 @@ func (FoodCreate) TableName() string {
 	return Food{}.TableName()
 }
 
+type FoodUpdate struct {
+	Name        string        `json:"name" gorm:"column:name;"`
+	Images      *common.Image `json:"images" gorm:"column:images;"`
+	Price       float64       `json:"price" gorm:"column:price;"`
+	Description string        `json:"description" gorm:"column:description;"`
+}
+
+func (FoodUpdate) TableName() string {
+	return Food{}.TableName()
+}
+
 // Validate
 func (data *FoodCreate) Validate() error {
 	data.Name = strings.TrimSpace(data.Name)
@@ -57,6 +68,11 @@ func (data *FoodCreate) Validate() error {
 	}
 
 	return nil
+}
+
+// Mask
+func (r *Food) Mask(isAdminOrOwner bool) {
+	r.GenUID(common.DbTypeRestaurant)
 }
 
 func (data *FoodCreate) Mask(isAdminOrOwner bool) {

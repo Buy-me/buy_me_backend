@@ -81,6 +81,11 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 	food := v1.Group("/foods", middleware.RequiredAuth(appContext))
 	{
 		food.POST("/", ginfood.CreateFood(appContext))
+		food.GET("/", ginfood.ListFood(appContext))
+		food.GET("/:id", ginfood.GetFood(appContext))
+		food.DELETE("/:id", ginfood.DeleteFood(appContext))
+		food.PATCH("/:id", ginfood.UpdateFood(appContext))
+
 	}
 
 	// v1/restaurants/:id/liked-users

@@ -17,16 +17,16 @@ type GetFoodStore interface {
 
 // Cau truc cua doi tuong xoa nha hang
 type getFoodBiz struct {
-	store     DeleteFoodStore
+	store     GetFoodStore
 	requester common.Requester
 }
 
 // Khoi tai biz delete
-func NewGetFoodBiz(store DeleteFoodStore, requester common.Requester) *deleteFoodBiz {
-	return &deleteFoodBiz{store: store, requester: requester}
+func NewGetFoodBiz(store GetFoodStore, requester common.Requester) *getFoodBiz {
+	return &getFoodBiz{store: store, requester: requester}
 }
 
-func (biz *deleteFoodBiz) GetFood(context context.Context, id int) (*foodmodel.Food, error) {
+func (biz *getFoodBiz) GetFood(context context.Context, id int) (*foodmodel.Food, error) {
 	// oldData, err := biz.store.FindDataWithCondition(context, map[string]interface{}{"id": id})
 
 	food, err := biz.store.FindDataWithCondition(context, map[string]interface{}{"id": id})

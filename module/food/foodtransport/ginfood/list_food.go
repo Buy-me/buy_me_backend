@@ -32,7 +32,7 @@ func ListFood(appCtx appctx.AppContext) gin.HandlerFunc {
 		var result []foodmodel.Food
 
 		store := foodstorage.NewSQLStore(db)
-		biz := foodbiz.NewListRestaurantBiz(store)
+		biz := foodbiz.NewListFoodBiz(store)
 
 		result, err := biz.ListFood(c.Request.Context(), &filter, &pagingData)
 

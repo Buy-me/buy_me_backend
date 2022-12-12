@@ -27,7 +27,7 @@ type listFoodBiz struct {
 }
 
 // Khoi tao doi tuong lay danh sach nha hang
-func NewListRestaurantBiz(store ListFoodStore) *listFoodBiz {
+func NewListFoodBiz(store ListFoodStore) *listFoodBiz {
 	return &listFoodBiz{store: store}
 }
 

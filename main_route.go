@@ -6,6 +6,7 @@ import (
 	"food_delivery/module/food/foodtransport/ginfood"
 	"food_delivery/module/restaurant/transport/ginrestaurant"
 	"food_delivery/module/restaurantlike/restaurantliketransport/ginrestaurantlike"
+	"food_delivery/module/ticket/tickettransport/ginticket"
 	"food_delivery/module/upload/transport/ginupload"
 	"food_delivery/module/user/usertransport/ginuser"
 	"net/http"
@@ -85,7 +86,13 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 		food.GET("/:id", ginfood.GetFood(appContext))
 		food.DELETE("/:id", ginfood.DeleteFood(appContext))
 		food.PATCH("/:id", ginfood.UpdateFood(appContext))
+	}
 
+	ticket := v1.Group("/tickets")
+	{
+		ticket.POST("/", ginticket.CreateTicket(appContext))
+		ticket.GET("/", ginticket.ListTicket(appContext))
+		ticket.GET("/:id", ginticket.GetTicket(appContext))
 	}
 
 	// v1/restaurants/:id/liked-users

@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"food_delivery/common"
-	"food_delivery/module/food/foodmodel"
 	"food_delivery/module/ticket/ticketmodel"
-	"net/smtp"
 )
 
 type CreateTicketStore interface {
@@ -30,36 +28,36 @@ type Mail struct {
 
 func (biz *createTicketBiz) CreateTicket(context context.Context, data *ticketmodel.TicketCreate) error {
 
-	from := "binhdinhqt137@gmail.com"
-	password := "rrvksahzyphwcicr"
+	// from := "binhdinhqt137@gmail.com"
+	// password := "rrvksahzyphwcicr"
 
-	toEmailAddress := data.Email
-	to := []string{toEmailAddress}
+	// toEmailAddress := data.Email
+	// to := []string{toEmailAddress}
 
-	host := "smtp.gmail.com"
-	port := "587"
-	address := host + ":" + port
+	// host := "smtp.gmail.com"
+	// port := "587"
+	// address := host + ":" + port
 
-	// subject := "Subject: This is the subject of the mail\n"
-	// body := "This is the body of the mail"
+	// // subject := "Subject: This is the subject of the mail\n"
+	// // body := "This is the body of the mail"
 
-	mail := Mail{
-		Sender:  from,
-		To:      to,
-		Subject: "Train Ticket",
-		Body:    "Train Ticket Detail",
-	}
-	message := BuildMessage(mail)
+	// mail := Mail{
+	// 	Sender:  "Super Train",
+	// 	To:      to,
+	// 	Subject: "Train Ticket",
+	// 	Body:    "Train Ticket Detail",
+	// }
+	// message := BuildMessage(mail)
 
-	auth := smtp.PlainAuth("", from, password, host)
+	// auth := smtp.PlainAuth("", from, password, host)
 
-	err := smtp.SendMail(address, auth, from, to, []byte(message))
-	if err != nil {
-		return err
-	}
+	// err := smtp.SendMail(address, auth, from, to, []byte(message))
+	// if err != nil {
+	// 	return err
+	// }
 
 	if err := biz.store.Create(context, data); err != nil {
-		return common.ErrCannotCreateEntity(foodmodel.EntityName, err)
+		return common.ErrCannotCreateEntity(ticketmodel.EntityName, err)
 	}
 
 	return nil
@@ -71,5 +69,6 @@ func BuildMessage(mail Mail) string {
 	msg += fmt.Sprintf("To: %s\r\n", mail.To)
 	msg += fmt.Sprintf("Subject: %s\r\n", mail.Subject)
 	msg += fmt.Sprintf("\r\n%s\r\n", mail.Body)
+
 	return msg
 }

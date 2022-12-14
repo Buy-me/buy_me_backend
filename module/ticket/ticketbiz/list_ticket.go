@@ -38,7 +38,7 @@ func (biz *listTicketBiz) ListTicket(
 	paging *common.Paging,
 ) ([]ticketmodel.Ticket, error) {
 
-	result, err := biz.store.ListDataWithCondition(context, filter, paging)
+	result, err := biz.store.ListDataWithCondition(context, filter, paging, "Travelers")
 
 	if err != nil {
 		return nil, err

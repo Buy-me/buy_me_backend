@@ -28,8 +28,7 @@ func CreateTicket(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-	
-		
+		log.Println(data)
 		// data.UserId = requester.GetUserId()
 
 		store := ticketstorage.NewSQLStore(db)

@@ -15,8 +15,10 @@ func (s *sqlStore) FindDataWithCondition(
 ) (*ticketmodel.Ticket, error) {
 
 	var data ticketmodel.Ticket
+	db := s.db.Table(ticketmodel.Ticket{}.TableName())
+	db = db.Preload("Travelers")
 
-	if err := s.db.Where(condition).First(&data).Error; err != nil {
+	if err := db.Where(condition).First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.ErrRecordNotFound
 		}

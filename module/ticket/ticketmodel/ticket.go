@@ -30,21 +30,23 @@ const EntityName = "Ticket"
 
 type Ticket struct {
 	common.SQLModel  `json:",inline"`
-	Name             string `json:"name" gorm:"column:name;"`
-	Email            string `json:"email" gorm:"column:email;"`
-	Phone            string `json:"phone" gorm:"column:phone;"`
-	JourneyId        string `json:"journey_id" gorm:"column:journey_id;"`
-	TrainId          string `json:"train_id" gorm:"column:train_id;"`
-	CarriageId       string `json:"carriage_id" gorm:"column:carriage_id;"`
-	ChairId          string `json:"chair_id" gorm:"column:chair_id;"`
-	JourneyArrive    string `json:"journey_arrive" gorm:"column:journey_arrive;"`
-	JourneyDeparture string `json:"journey_departure" gorm:"column:journey_departure;"`
-	DepartureTime    int64  `json:"departure_time" gorm:"column:departure_time;"`
-	ArriveTime       int64  `json:"arrive_time" gorm:"column:arrive_time;"`
-	TrainName        string `json:"train_name" gorm:"column:train_name;"`
-	CarriageNumber   int    `json:"carriage_number" gorm:"column:carriage_number;"`
-	ChairName        string `json:"chair_name" gorm:"column:chair_name;"`
-	ChairType        string `json:"chair_type" gorm:"column:chair_type;"`
+	Name             string         `json:"name" gorm:"column:name;"`
+	Email            string         `json:"email" gorm:"column:email;"`
+	Phone            string         `json:"phone" gorm:"column:phone;"`
+	JourneyId        string         `json:"journey_id" gorm:"column:journey_id;"`
+	TrainId          string         `json:"train_id" gorm:"column:train_id;"`
+	CarriageId       string         `json:"carriage_id" gorm:"column:carriage_id;"`
+	ChairId          string         `json:"chair_id" gorm:"column:chair_id;"`
+	JourneyArrive    string         `json:"journey_arrive" gorm:"column:journey_arrive;"`
+	JourneyDeparture string         `json:"journey_departure" gorm:"column:journey_departure;"`
+	DepartureTime    int64          `json:"departure_time" gorm:"column:departure_time;"`
+	ArriveTime       int64          `json:"arrive_time" gorm:"column:arrive_time;"`
+	TrainName        string         `json:"train_name" gorm:"column:train_name;"`
+	CarriageNumber   int            `json:"carriage_number" gorm:"column:carriage_number;"`
+	ChairName        string         `json:"chair_name" gorm:"column:chair_name;"`
+	ChairType        string         `json:"chair_type" gorm:"column:chair_type;"`
+	TotalPrice       float64        `json:"total_price" gorm:"column:price;"`
+	Travelers        []TicketDetail `json:"travelers"`
 }
 
 func (Ticket) TableName() string {
@@ -53,21 +55,23 @@ func (Ticket) TableName() string {
 
 type TicketCreate struct {
 	common.SQLModel  `json:",inline"`
-	Name             string `json:"name" gorm:"column:name;"`
-	Email            string `json:"email" gorm:"column:email;"`
-	Phone            string `json:"phone" gorm:"column:phone;"`
-	JourneyId        string `json:"journey_id" gorm:"column:journey_id;"`
-	TrainId          string `json:"train_id" gorm:"column:train_id;"`
-	CarriageId       string `json:"carriage_id" gorm:"column:carriage_id;"`
-	ChairId          string `json:"chair_id" gorm:"column:chair_id;"`
-	JourneyArrive    string `json:"journey_arrive" gorm:"column:journey_arrive;"`
-	JourneyDeparture string `json:"journey_departure" gorm:"column:journey_departure;"`
-	DepartureTime    int64  `json:"departure_time" gorm:"column:departure_time;"`
-	ArriveTime       int64  `json:"arrive_time" gorm:"column:arrive_time;"`
-	TrainName        string `json:"train_name" gorm:"column:train_name;"`
-	CarriageNumber   int    `json:"carriage_number" gorm:"column:carriage_number;"`
-	ChairName        string `json:"chair_name" gorm:"column:chair_name;"`
-	ChairType        string `json:"chair_type" gorm:"column:chair_type;"`
+	Name             string               `json:"name" gorm:"column:name;"`
+	Email            string               `json:"email" gorm:"column:email;"`
+	Phone            string               `json:"phone" gorm:"column:phone;"`
+	JourneyId        *string              `json:"journey_id" gorm:"column:journey_id;"`
+	TrainId          *string              `json:"train_id" gorm:"column:train_id;"`
+	CarriageId       *string              `json:"carriage_id" gorm:"column:carriage_id;"`
+	ChairId          *string              `json:"chair_id" gorm:"column:chair_id;"`
+	JourneyArrive    string               `json:"journey_arrive" gorm:"column:journey_arrive;"`
+	JourneyDeparture string               `json:"journey_departure" gorm:"column:journey_departure;"`
+	DepartureTime    int64                `json:"departure_time" gorm:"column:departure_time;"`
+	ArriveTime       int64                `json:"arrive_time" gorm:"column:arrive_time;"`
+	TrainName        *string              `json:"train_name" gorm:"column:train_name;"`
+	CarriageNumber   *int                 `json:"carriage_number" gorm:"column:carriage_number;"`
+	ChairName        *string              `json:"chair_name" gorm:"column:chair_name;"`
+	ChairType        *string              `json:"chair_type" gorm:"column:chair_type;"`
+	TotalPrice       float64              `json:"total_price" gorm:"column:price;"`
+	Travelers        []TicketDetailCreate `json:"travelers"`
 }
 
 func (TicketCreate) TableName() string {

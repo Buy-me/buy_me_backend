@@ -4,6 +4,7 @@ import (
 	"food_delivery/component/appctx"
 	"food_delivery/middleware"
 	"food_delivery/module/food/foodtransport/ginfood"
+	"food_delivery/module/order/ordertransport/ginorder"
 	"food_delivery/module/restaurant/transport/ginrestaurant"
 	"food_delivery/module/restaurantlike/restaurantliketransport/ginrestaurantlike"
 	"food_delivery/module/ticket/tickettransport/ginticket"
@@ -93,6 +94,15 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 		ticket.POST("/", ginticket.CreateTicket(appContext))
 		ticket.GET("/", ginticket.ListTicket(appContext))
 		ticket.GET("/:id", ginticket.GetTicket(appContext))
+	}
+
+	order := v1.Group("/orders", middleware.RequiredAuth(appContext))
+	{
+		order.POST("/", ginorder.CreateOrder(appContext))
+		order.GET("/", ginorder.ListOrder(appContext))
+		order.GET("/:id", ginorder.GetOrder(appContext))
+		order.DELETE("/:id", ginorder.DeleteOrder(appContext))
+		order.PATCH("/:id", ginorder.UpdateOrder(appContext))
 	}
 
 	// v1/restaurants/:id/liked-users

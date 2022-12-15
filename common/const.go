@@ -1,11 +1,12 @@
 package common
 
 const (
-	DbTypeRestaurant = 1
-	DbTypeFood       = 2
-	DbTypeCategory   = 3
-	DbTypeUser       = 4
-	DbTypeTicketOrder       = 4
+	DbTypeRestaurant  = 1
+	DbTypeFood        = 2
+	DbTypeCategory    = 3
+	DbTypeUser        = 4
+	DbTypeTicketOrder = 5
+	DbTypeOrder       = 6
 )
 
 const CurrentUser = "user"

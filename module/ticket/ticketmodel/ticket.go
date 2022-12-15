@@ -84,20 +84,8 @@ func (r *Ticket) Mask(isAdminOrOwner bool) {
 }
 
 func (data *TicketCreate) Mask(isAdminOrOwner bool) {
-	data.GenUID(common.DbTypeRestaurant)
+	data.GenUID(common.DbTypeTicketOrder)
 }
-
-// // Validate
-// func (data *RestaurantCreate) Validate() error {
-// 	data.Name = strings.TrimSpace(data.Name)
-
-// 	if data.Name == "" {
-// 		return ErrNameIsEmpty
-// 	}
-
-// 	return nil
-
-// }
 
 // Error
 var (

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"food_delivery/component/appctx"
 	"food_delivery/component/uploadprovider"
 	"food_delivery/middleware"
@@ -68,6 +69,8 @@ func main() {
 
 	// **************** DEMO GIN REACT API *********************
 	r := gin.Default()
+
+	r.Use(CORS())
 	r.Use(middleware.Recover(appContext))
 
 	r.GET("/ping", func(c *gin.Context) {
@@ -86,45 +89,69 @@ func main() {
 
 	//****** POST ******
 	v1 := r.Group("/v1")
-
+	v1.Use(CORS())
 	setUpRoutes(appContext, v1)
 	setUpAdminRoutes(appContext, v1)
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 
 	// +++++++++++++++++++++++ DEMO GORM *******************
+	/*
+		// newRestaurant := Restaurant{Name: "Beff Bitch", Addr: "99 Thu Duc"}
 
-	// newRestaurant := Restaurant{Name: "Beff Bitch", Addr: "99 Thu Duc"}
+		// if err := db.Create(&newRestaurant).Error; err != nil {
+		// 	log.Println(err)
+		// }
 
-	// if err := db.Create(&newRestaurant).Error; err != nil {
-	// 	log.Println(err)
-	// }
+		// log.Println("New id: ", newRestaurant.Id)
 
-	// log.Println("New id: ", newRestaurant.Id)
+		// var myRestaurant Restaurant
 
-	// var myRestaurant Restaurant
+		// if err := db.Where("id = ?", 1).First(&myRestaurant).Error; err != nil {
+		// 	log.Println(err)
+		// }
 
-	// if err := db.Where("id = ?", 1).First(&myRestaurant).Error; err != nil {
-	// 	log.Println(err)
-	// }
+		// log.Println(myRestaurant)
 
-	// log.Println(myRestaurant)
+		// newName := "200 Lab"
+		// updateData := RestaurantUpdate{Name: &newName}
 
-	// newName := "200 Lab"
-	// updateData := RestaurantUpdate{Name: &newName}
+		// myRestaurant.Name = ""
 
-	// myRestaurant.Name = ""
+		// if err := db.Where("id = ?", 2).Updates(&updateData).Error; err != nil {
+		// 	log.Println(err)
+		// }
 
-	// if err := db.Where("id = ?", 2).Updates(&updateData).Error; err != nil {
-	// 	log.Println(err)
-	// }
+		// log.Println(myRestaurant)
 
-	// log.Println(myRestaurant)
+		// if err := db.Table(Restaurant{}.TableName()).Where("id = ?", 1).Delete(nil).Error; err != nil {
+		// 	log.Println(err)
+		// }
 
-	// if err := db.Table(Restaurant{}.TableName()).Where("id = ?", 1).Delete(nil).Error; err != nil {
-	// 	log.Println(err)
-	// }
+		// log.Println("Delete Successfully")
+	*/
 
-	// log.Println("Delete Successfully")
+}
 
+// CORS Middleware
+func CORS() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		// c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, Origin, Cache-Control, X-Requested-With")
+		// c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+		// c.Writer.Header().Set("Access-Control-Allow-Methods", "PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH")
+
+		fmt.Println(c.Request.Method)
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
 }

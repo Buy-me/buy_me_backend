@@ -27,7 +27,7 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 	restaurant := v1.Group("/restaurants", middleware.RequiredAuth(appContext))
 	{
 
-		restaurant.POST("/", ginrestaurant.CreateRestaurant(appContext))
+		restaurant.POST("", ginrestaurant.CreateRestaurant(appContext))
 		restaurant.GET("/:id", func(c *gin.Context) {
 			id, err := strconv.Atoi(c.Param("id"))
 
@@ -47,7 +47,7 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 				"data": data,
 			})
 		})
-		restaurant.GET("/", ginrestaurant.ListRestaurant(appContext))
+		restaurant.GET("", ginrestaurant.ListRestaurant(appContext))
 		restaurant.DELETE("/:id", ginrestaurant.DeleteRestaurant(appContext))
 		restaurant.PATCH("/:id", func(c *gin.Context) {
 			id, err := strconv.Atoi(c.Param("id"))
@@ -82,8 +82,8 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 
 	food := v1.Group("/foods", middleware.RequiredAuth(appContext))
 	{
-		food.POST("/", ginfood.CreateFood(appContext))
-		food.GET("/", ginfood.ListFood(appContext))
+		food.POST("", ginfood.CreateFood(appContext))
+		food.GET("", ginfood.ListFood(appContext))
 		food.GET("/:id", ginfood.GetFood(appContext))
 		food.DELETE("/:id", ginfood.DeleteFood(appContext))
 		food.PATCH("/:id", ginfood.UpdateFood(appContext))
@@ -91,15 +91,15 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 
 	ticket := v1.Group("/tickets")
 	{
-		ticket.POST("/", ginticket.CreateTicket(appContext))
-		ticket.GET("/", ginticket.ListTicket(appContext))
+		ticket.POST("", ginticket.CreateTicket(appContext))
+		ticket.GET("", ginticket.ListTicket(appContext))
 		ticket.GET("/:id", ginticket.GetTicket(appContext))
 	}
 
 	order := v1.Group("/orders", middleware.RequiredAuth(appContext))
 	{
-		order.POST("/", ginorder.CreateOrder(appContext))
-		order.GET("/", ginorder.ListOrder(appContext))
+		order.POST("", ginorder.CreateOrder(appContext))
+		order.GET("", ginorder.ListOrder(appContext))
 		order.GET("/:id", ginorder.GetOrder(appContext))
 		order.DELETE("/:id", ginorder.DeleteOrder(appContext))
 		order.PATCH("/:id", ginorder.UpdateOrder(appContext))

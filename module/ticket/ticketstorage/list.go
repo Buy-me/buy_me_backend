@@ -53,11 +53,11 @@ func (s *sqlStore) ListDataWithCondition(
 		return nil, common.ErrDB(err)
 	}
 
-	if len(result) > 0 {
-		last := result[len(result)-1]
-		last.Mask(false)
-		paging.NextCursor = last.FakeId.String()
-	}
+	// if len(result) > 0 {
+	// 	last := result[len(result)-1]
+	// 	last.Mask(false)
+	// 	paging.NextCursor = last.FakeId.String()
+	// }
 
 	return result, nil
 }

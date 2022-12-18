@@ -18,11 +18,11 @@ func (s *sqlStore) ListDataWithCondition(
 	//or (1,2,3)
 	db := s.db.Table(foodmodel.Food{}.TableName()).Where("status in (1)")
 
-	// if filter != nil {
-	// 	if filter.OwnerId > 0 {
-	// 		db = db.Where("user_id = ?", filter.OwnerId)
-	// 	}
-	// }
+	if filter != nil {
+		if filter.CategoryId > 0 {
+			db = db.Where("category_id = ?", filter.CategoryId)
+		}
+	}
 
 	if err := db.Count(&paging.Total).Error; err != nil {
 		return nil, common.ErrDB(err)
@@ -53,11 +53,6 @@ func (s *sqlStore) ListDataWithCondition(
 		return nil, common.ErrDB(err)
 	}
 
-	if len(result) > 0 {
-		last := result[len(result)-1]
-		last.Mask(false)
-		paging.NextCursor = last.FakeId.String()
-	}
 
 	return result, nil
 }

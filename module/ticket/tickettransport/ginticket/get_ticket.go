@@ -29,7 +29,8 @@ func GetTicket(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		data, err := biz.GetTicket(c.Request.Context(), int(uid.GetLocalID()))
 
-		data.Mask(false)
+		// data.Mask(false)
+		
 		if err != nil {
 			panic(err)
 		}

@@ -9,7 +9,7 @@ import (
 )
 
 type Food struct {
-	Id           string        `json:"id" gorm:"column:id"`
+	Id           int           `json:"id" gorm:"column:id"`
 	RestaurantId int           `json:"restaurant_id" gorm:"column:restaurant_id;"`
 	CategoryId   int           `json:"category_id" gorm:"column:category_id;"`
 	Name         string        `json:"name" gorm:"column:name;"`

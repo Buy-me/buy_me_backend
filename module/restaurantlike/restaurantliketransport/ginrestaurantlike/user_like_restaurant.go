@@ -7,6 +7,7 @@ import (
 	"food_delivery/module/restaurantlike/restaurantlikemodel"
 	"food_delivery/module/restaurantlike/restaurantlikestorage"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +16,8 @@ import (
 
 func UserLikeRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		uid, err := common.FromBase58(c.Param("id"))
+		// uid, err := common.FromBase58(c.Param("id"))
+		id, err := strconv.Atoi(c.Param("id"))
 
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -24,7 +26,7 @@ func UserLikeRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 
 		data := restaurantlikemodel.RestaurantLike{
-			RestaurantId: int(uid.GetLocalID()),
+			RestaurantId: id,
 			UserId:       requester.GetUserId(),
 		}
 

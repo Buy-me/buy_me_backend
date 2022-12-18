@@ -7,6 +7,7 @@ import (
 	"food_delivery/module/restaurantlike/restaurantlikemodel"
 	"food_delivery/module/restaurantlike/restaurantlikestorage"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,10 +15,10 @@ import (
 func ListUsersLikeRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		uid, err := common.FromBase58(c.Param("id"))
+		id, err := strconv.Atoi(c.Param("id"))
 
 		filter := restaurantlikemodel.Filter{
-			RestaurantId: int(uid.GetLocalID()),
+			RestaurantId: id,
 		}
 
 		var paging common.Paging
@@ -38,9 +39,9 @@ func ListUsersLikeRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 			// return
 		}
 
-		for i := range result {
-			result[i].Mask(false)
-		}
+		// for i := range result {
+		// 	result[i].Mask(false)
+		// }
 
 		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, filter))
 

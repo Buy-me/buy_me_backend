@@ -42,8 +42,8 @@ func CreateTicket(appCtx appctx.AppContext) gin.HandlerFunc {
 		}
 		log.Println("Create oke")
 
-		data.Mask(false)
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data.FakeId.String()))
+		// data.Mask(false)
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data.Id))
 	}
 
 }

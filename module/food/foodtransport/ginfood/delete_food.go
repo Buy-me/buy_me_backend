@@ -5,6 +5,7 @@ import (
 	"food_delivery/component/appctx"
 	"food_delivery/module/food/foodbiz"
 	"food_delivery/module/food/foodstorage"
+	"strconv"
 
 	"net/http"
 
@@ -15,11 +16,11 @@ func DeleteFood(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := appCtx.GetMainDBConnection()
 
-		// id, err := strconv.Atoi(c.Param("id"))
+		id, err := strconv.Atoi(c.Param("id"))
 
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 
-		uid, err := common.FromBase58(c.Param("id"))
+		// uid, err := common.FromBase58(c.Param("id"))
 
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -28,7 +29,7 @@ func DeleteFood(appCtx appctx.AppContext) gin.HandlerFunc {
 		store := foodstorage.NewSQLStore(db)
 		biz := foodbiz.NewDeleteFoodBiz(store, requester)
 
-		if err := biz.DeleteFood(c.Request.Context(), int(uid.GetLocalID())); err != nil {
+		if err := biz.DeleteFood(c.Request.Context(), id); err != nil {
 			panic(err)
 		}
 

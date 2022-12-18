@@ -6,6 +6,7 @@ import (
 	"food_delivery/module/food/foodbiz"
 	"food_delivery/module/food/foodmodel"
 	"food_delivery/module/food/foodstorage"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -27,6 +28,8 @@ func ListFood(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
+		log.Println("category_id = ", filter.CategoryId)
+
 		pagingData.Fulfill()
 
 		var result []foodmodel.Food
@@ -40,9 +43,9 @@ func ListFood(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		for i := range result {
-			result[i].Mask(false)
-		}
+		// for i := range result {
+		// 	result[i].Mask(false)
+		// }
 		c.JSON(http.StatusOK, common.NewSuccessResponse(result, pagingData, filter))
 	}
 

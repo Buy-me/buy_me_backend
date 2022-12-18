@@ -39,9 +39,9 @@ func CreateOrder(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		data.Mask(false)
+		// data.Mask(false)
 
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data.FakeId.String()))
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data.Id))
 
 	}
 

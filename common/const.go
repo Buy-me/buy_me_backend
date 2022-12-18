@@ -7,6 +7,7 @@ const (
 	DbTypeUser        = 4
 	DbTypeTicketOrder = 5
 	DbTypeOrder       = 6
+	DbTypeCart        = 7
 )
 
 const CurrentUser = "user"

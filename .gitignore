@@ -1,3 +1,6 @@
-.env
-/backup
+
+/try_module/
+
+*.env
 deploy.sh
+

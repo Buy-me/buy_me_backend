@@ -6,13 +6,16 @@ import (
 	"food_delivery/module/restaurantlike/restaurantlikebiz"
 	"food_delivery/module/restaurantlike/restaurantlikestorage"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 func UserUnlikeRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		uid, err := common.FromBase58(c.Param("id"))
+
+		id, err := strconv.Atoi(c.Param("id"))
+		// uid, err := common.FromBase58(c.Param("id"))
 
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -26,7 +29,7 @@ func UserUnlikeRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 		biz := restaurantlikebiz.NewUserUnlikeRestaurantBiz(store, appCtx.GetPubsub())
 		// biz := restaurantlikebiz.NewUserUnlikeRestaurantBiz(store, appCtx.GetPubsub())
 
-		if err := biz.UnlikeRestaurant(c.Request.Context(), requester.GetUserId(), int(uid.GetLocalID())); err != nil {
+		if err := biz.UnlikeRestaurant(c.Request.Context(), requester.GetUserId(), id); err != nil {
 			panic(err)
 		}
 

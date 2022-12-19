@@ -6,6 +6,7 @@ import (
 	"food_delivery/module/food/foodbiz"
 	"food_delivery/module/food/foodmodel"
 	"food_delivery/module/food/foodstorage"
+	"strconv"
 
 	"net/http"
 
@@ -16,11 +17,11 @@ func UpdateFood(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := appCtx.GetMainDBConnection()
 
-		// id, err := strconv.Atoi(c.Param("id"))
+		id, err := strconv.Atoi(c.Param("id"))
 
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 
-		uid, err := common.FromBase58(c.Param("id"))
+		// uid, err := common.FromBase58(c.Param("id"))
 
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -36,7 +37,7 @@ func UpdateFood(appCtx appctx.AppContext) gin.HandlerFunc {
 		store := foodstorage.NewSQLStore(db)
 		biz := foodbiz.NewUpdateFoodBiz(store, requester)
 
-		err = biz.UpdateFood(c.Request.Context(), data, int(uid.GetLocalID()))
+		err = biz.UpdateFood(c.Request.Context(), data, id)
 
 		if err != nil {
 			panic(err)

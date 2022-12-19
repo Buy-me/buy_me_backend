@@ -12,11 +12,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateCategory(appCtx appctx.AppContext) gin.HandlerFunc {
+func CreateCart(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := appCtx.GetMainDBConnection()
 
-		// requester := c.MustGet(common.CurrentUser).(common.Requester)
+		requester := c.MustGet(common.CurrentUser).(common.Requester)
 		var data cartmodel.CartCreate
 
 		if err := c.ShouldBind(&data); err != nil {
@@ -24,6 +24,8 @@ func CreateCategory(appCtx appctx.AppContext) gin.HandlerFunc {
 			// return
 			panic(err)
 		}
+
+		data.UserId = requester.GetUserId()
 
 		store := cartstorage.NewSQLStore(db)
 

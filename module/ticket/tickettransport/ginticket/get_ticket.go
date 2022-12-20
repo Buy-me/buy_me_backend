@@ -3,6 +3,7 @@ package ginticket
 import (
 	"food_delivery/common"
 	"food_delivery/component/appctx"
+	"strconv"
 
 	"food_delivery/module/ticket/ticketbiz"
 	"food_delivery/module/ticket/ticketstorage"
@@ -16,9 +17,9 @@ func GetTicket(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := appCtx.GetMainDBConnection()
 
-		// id, err := strconv.Atoi(c.Param("id"))
+		id, err := strconv.Atoi(c.Param("id"))
 
-		uid, err := common.FromBase58(c.Param("id"))
+		// uid, err := common.FromBase58(c.Param("id"))
 
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -27,10 +28,10 @@ func GetTicket(appCtx appctx.AppContext) gin.HandlerFunc {
 		store := ticketstorage.NewSQLStore(db)
 		biz := ticketbiz.NewGetTicketBiz(store)
 
-		data, err := biz.GetTicket(c.Request.Context(), int(uid.GetLocalID()))
+		data, err := biz.GetTicket(c.Request.Context(), id)
 
 		// data.Mask(false)
-		
+
 		if err != nil {
 			panic(err)
 		}

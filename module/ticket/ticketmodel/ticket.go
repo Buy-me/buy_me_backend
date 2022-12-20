@@ -3,6 +3,7 @@ package ticketmodel
 import (
 	"errors"
 	"food_delivery/common"
+	"time"
 )
 
 type RestaurantType string
@@ -46,6 +47,7 @@ type Ticket struct {
 	ChairName        string         `json:"chair_name" gorm:"column:chair_name;"`
 	ChairType        string         `json:"chair_type" gorm:"column:chair_type;"`
 	TotalPrice       float64        `json:"total_price" gorm:"column:price;"`
+	State            string         `json:"state" gorm:"column:state;"`
 	Travelers        []TicketDetail `json:"travelers"`
 }
 
@@ -71,6 +73,7 @@ type TicketCreate struct {
 	ChairName        *string              `json:"chair_name" gorm:"column:chair_name;"`
 	ChairType        *string              `json:"chair_type" gorm:"column:chair_type;"`
 	TotalPrice       float64              `json:"total_price" gorm:"column:price;"`
+	State            string               `json:"state" gorm:"column:state;"`
 	Travelers        []TicketDetailCreate `json:"travelers"`
 }
 
@@ -81,6 +84,10 @@ func (TicketCreate) TableName() string {
 // Mask
 func (r *Ticket) Mask(isAdminOrOwner bool) {
 	r.GenUID(common.DbTypeTicketOrder)
+}
+
+func (m *TicketCreate) GetTime() (dt time.Time, at time.Time) {
+	return time.Unix(0, m.DepartureTime*int64(time.Millisecond)), time.Unix(0, m.ArriveTime*int64(time.Millisecond))
 }
 
 func (data *TicketCreate) Mask(isAdminOrOwner bool) {

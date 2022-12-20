@@ -103,6 +103,7 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 		ticket.POST("", ginticket.CreateTicket(appContext))
 		ticket.GET("", ginticket.ListTicket(appContext))
 		ticket.GET("/:id", ginticket.GetTicket(appContext))
+		ticket.GET("/:id/payment-ticket", ginticket.PaymentTicket(appContext))
 	}
 
 	order := v1.Group("/orders", middleware.RequiredAuth(appContext))

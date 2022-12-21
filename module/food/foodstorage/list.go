@@ -22,6 +22,12 @@ func (s *sqlStore) ListDataWithCondition(
 		if filter.CategoryId > 0 {
 			db = db.Where("category_id = ?", filter.CategoryId)
 		}
+
+		if filter.Sort != "" {
+			db = db.Order(filter.Sort)
+		} else {
+			db = db.Order("id desc")
+		}
 	}
 
 	if err := db.Count(&paging.Total).Error; err != nil {
@@ -48,11 +54,9 @@ func (s *sqlStore) ListDataWithCondition(
 
 	if err := db.
 		Limit(paging.Limit).
-		Order("id desc").
 		Find(&result).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
-
 
 	return result, nil
 }

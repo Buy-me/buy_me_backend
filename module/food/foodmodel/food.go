@@ -18,6 +18,8 @@ type Food struct {
 	Images          *common.Image `json:"images" gorm:"column:images;"`
 	Price           float64       `json:"price" gorm:"column:price;"`
 	Description     string        `json:"description" gorm:"column:description;"`
+	Rating          float64       `json:"rating" gorm:"column:rating;"`
+	CountRating     int           `json:"-" gorm:"column:count_rating;"`
 }
 
 func (Food) TableName() string {
@@ -44,6 +46,8 @@ type FoodUpdate struct {
 	Price       float64       `json:"price" gorm:"column:price;"`
 	Description string        `json:"description" gorm:"column:description;"`
 }
+
+
 
 func (FoodUpdate) TableName() string {
 	return Food{}.TableName()

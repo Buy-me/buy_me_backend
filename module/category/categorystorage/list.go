@@ -48,7 +48,7 @@ func (s *sqlStore) ListDataWithCondition(
 
 	if err := db.
 		Limit(paging.Limit).
-		Order("id desc").
+		Order("id ASC").
 		Find(&result).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}

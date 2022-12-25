@@ -4,6 +4,7 @@ import (
 	"context"
 	"food_delivery/common"
 	"food_delivery/module/food/foodmodel"
+	"strings"
 )
 
 func (s *sqlStore) ListDataWithCondition(
@@ -21,6 +22,22 @@ func (s *sqlStore) ListDataWithCondition(
 	if filter != nil {
 		if filter.CategoryId > 0 {
 			db = db.Where("category_id = ?", filter.CategoryId)
+		}
+
+		if filter.MaxPrice > 0 {
+			db = db.Where("price <= ?", filter.MaxPrice)
+		}
+
+		if filter.MinPrice > 0 {
+			db = db.Where("price >= ?", filter.MinPrice)
+		}
+
+		if filter.Rating > 0 {
+			db = db.Where("rating >= ?", filter.Rating)
+		}
+
+		if filter.Search != "" {
+			db = db.Where("name LIKE ?", "%"+strings.Trim(filter.Search, " ")+"%")
 		}
 
 		if filter.Sort != "" {

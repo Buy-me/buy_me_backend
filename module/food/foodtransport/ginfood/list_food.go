@@ -6,6 +6,7 @@ import (
 	"food_delivery/module/food/foodbiz"
 	"food_delivery/module/food/foodmodel"
 	"food_delivery/module/food/foodstorage"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,6 +27,11 @@ func ListFood(appCtx appctx.AppContext) gin.HandlerFunc {
 		if err := c.ShouldBind(&filter); err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
+
+		log.Println("Filter", filter)
+		log.Println("Max Price", filter.MaxPrice)
+		log.Println("Min Price", filter.MinPrice)
+		log.Println("Search", filter.Search)
 
 		pagingData.Fulfill()
 

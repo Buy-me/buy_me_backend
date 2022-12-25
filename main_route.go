@@ -96,6 +96,10 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 		food.GET("/:id", ginfood.GetFood(appContext))
 		food.DELETE("/:id", ginfood.DeleteFood(appContext))
 		food.PATCH("/:id", ginfood.UpdateFood(appContext))
+
+		//Food Rating
+		food.POST("/:id/rating", ginfood.CreateFoodRating(appContext))
+
 	}
 
 	ticket := v1.Group("/tickets")

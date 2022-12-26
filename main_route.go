@@ -5,6 +5,7 @@ import (
 	"food_delivery/middleware"
 	"food_delivery/module/cart/carttransport/gincart"
 	"food_delivery/module/category/categorytransport/gincategory"
+	"food_delivery/module/favourite/favouritetransport/ginfavourite"
 	"food_delivery/module/food/foodtransport/ginfood"
 	"food_delivery/module/order/ordertransport/ginorder"
 	"food_delivery/module/restaurant/transport/ginrestaurant"
@@ -26,6 +27,7 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 	v1.POST("/authenticate", ginuser.LoginHandler(appContext))
 	v1.GET("/profile", middleware.RequiredAuth(appContext), ginuser.Profile(appContext))
 	v1.GET("/my-cart", middleware.RequiredAuth(appContext), ginuser.GetCart(appContext))
+	v1.GET("/my-favourite", middleware.RequiredAuth(appContext), ginuser.GetFavourite(appContext))
 
 	restaurant := v1.Group("/restaurants", middleware.RequiredAuth(appContext))
 	{
@@ -124,8 +126,12 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 		cart.POST("", gincart.CreateCart(appContext))
 		cart.PATCH("", gincart.UpdateCart(appContext))
 		cart.DELETE("", gincart.DeleteCart(appContext))
-		// cart.GET("/my-cart", gincart.GetCart(appContext))
-		// order.GET("/:id", ginorder.GetOrder(appContext))
+	}
+
+	favourite := v1.Group("/favourites", middleware.RequiredAuth(appContext))
+	{
+		favourite.POST("", ginfavourite.CreateFavourite(appContext))
+		favourite.DELETE("", ginfavourite.DeleteFavourite(appContext))
 	}
 
 	// v1/restaurants/:id/liked-users

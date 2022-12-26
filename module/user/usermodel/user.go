@@ -18,6 +18,7 @@ type User struct {
 	Role            string           `json:"role" gorm:"column:role;type:ENUM('user', 'admin')"`
 	Avatar          *common.Image    `json:"avatar,omitempty" gorm:"column:avatar;type:json"`
 	ListFoodInCart  []foodmodel.Food `json:"items" gorm:"many2many:carts;"`
+	ListFavourite   []foodmodel.Food `json:"favourites" gorm:"many2many:favourites;"`
 }
 
 func (u *User) Mask(isAdminOrOwner bool) {

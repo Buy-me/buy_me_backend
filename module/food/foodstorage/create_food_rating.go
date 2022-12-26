@@ -23,8 +23,8 @@ func (s *sqlStore) CreateFoodRating(context context.Context, data *foodmodel.Foo
 
 		log.Println(food.Rating, food.CountRating)
 
-		newRating := (food.Rating + data.Rating) / (float64(food.CountRating) + 1)
 		newCountRating := food.CountRating + 1
+		newRating := ((food.Rating * float64(food.CountRating)) + data.Rating) / (float64(newCountRating))
 
 		if err := s.db.Table(foodmodel.Food{}.TableName()).Where("id = ?", data.FoodId).Updates(map[string]interface{}{"rating": newRating, "count_rating": newCountRating}).Error; err != nil {
 			return

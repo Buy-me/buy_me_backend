@@ -29,7 +29,7 @@ func NewDeleteAddressBiz(store DeleteAddressStore, requester common.Requester) *
 }
 
 // Ham Thuc Thi Xoa Nha Hang
-func (biz *deleteAddressBiz) DeleteCart(context context.Context, id int) error {
+func (biz *deleteAddressBiz) DeleteAddress(context context.Context, id int) error {
 	oldData, err := biz.store.
 		FindDataWithCondition(context, map[string]interface{}{"id": id})
 

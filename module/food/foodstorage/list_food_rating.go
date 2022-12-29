@@ -4,33 +4,21 @@ import (
 	"context"
 	"food_delivery/common"
 	"food_delivery/module/food/foodmodel"
-	"log"
 )
 
-func (s *sqlStore) ListFoodRating(context context.Context, data *foodmodel.FoodRating) error {
+func (s *sqlStore) ListFoodRating(context context.Context, foodId int, moreKeys ...string) ([]foodmodel.FoodRating, error) {
+	var result []foodmodel.FoodRating
 
-	if err := s.db.Create(&data).Error; err != nil {
-		return common.ErrDB(err)
+	//or (1,2,3)
+	db := s.db.Table(foodmodel.FoodRating{}.TableName()).Where("status in (1)")
+
+	if foodId > 0 {
+		db = db.Where("food_id = ?", foodId)
 	}
 
-	go func(data *foodmodel.FoodRating) {
-		var food foodmodel.Food
+	if err := db.Find(&result).Error; err != nil {
+		return nil, common.ErrDB(err)
+	}
 
-		if err := s.db.Where("id = ?", data.FoodId).First(&food).Error; err != nil {
-			log.Println(err)
-			return
-		}
-
-		log.Println(food.Rating, food.CountRating)
-
-		newCountRating := food.CountRating + 1
-		newRating := ((food.Rating * float64(food.CountRating)) + data.Rating) / (float64(newCountRating))
-
-		if err := s.db.Table(foodmodel.Food{}.TableName()).Where("id = ?", data.FoodId).Updates(map[string]interface{}{"rating": newRating, "count_rating": newCountRating}).Error; err != nil {
-			return
-		}
-
-	}(data)
-
-	return nil
+	return result, nil
 }

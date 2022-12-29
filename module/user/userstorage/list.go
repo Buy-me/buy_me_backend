@@ -4,6 +4,7 @@ import (
 	"context"
 	"food_delivery/common"
 	"food_delivery/module/user/usermodel"
+	"strings"
 )
 
 func (s *sqlStore) ListDataWithCondition(
@@ -17,6 +18,20 @@ func (s *sqlStore) ListDataWithCondition(
 
 	//or (1,2,3)
 	db := s.db.Table(usermodel.User{}.TableName()).Where("status in (1)")
+
+	if filter != nil {
+		if filter.Search != "" {
+			db = db.Where("email LIKE ?", "%"+strings.Trim(filter.Search, " ")+"%")
+		}
+
+		if filter.Sort != "" {
+			db = db.Order(filter.Sort)
+		} else {
+			db = db.Order("id desc")
+		}
+	} else {
+		db = db.Order("id desc")
+	}
 
 	if err := db.Count(&paging.Total).Error; err != nil {
 		return nil, common.ErrDB(err)
@@ -42,7 +57,6 @@ func (s *sqlStore) ListDataWithCondition(
 
 	if err := db.
 		Limit(paging.Limit).
-		Order("id desc").
 		Find(&result).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}

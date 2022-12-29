@@ -30,6 +30,7 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 	v1.GET("/my-cart", middleware.RequiredAuth(appContext), ginuser.GetCart(appContext))
 	v1.GET("/my-favourite", middleware.RequiredAuth(appContext), ginuser.GetFavourite(appContext))
 	v1.GET("/my-address", middleware.RequiredAuth(appContext), ginuser.GetAddresses(appContext))
+	v1.GET("/my-order", middleware.RequiredAuth(appContext), ginorder.ListUserOrder(appContext))
 
 	user := v1.Group("/users", middleware.RequiredAuth(appContext))
 	{
@@ -108,6 +109,7 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 
 		//Food Rating
 		food.POST("/:id/rating", ginfood.CreateFoodRating(appContext))
+		food.GET("/:id/rating/list", ginfood.ListFoodRating(appContext))
 
 	}
 

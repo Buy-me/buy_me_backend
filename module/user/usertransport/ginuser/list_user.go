@@ -6,7 +6,6 @@ import (
 	"food_delivery/module/user/userbusiness"
 	"food_delivery/module/user/usermodel"
 	"food_delivery/module/user/userstorage"
-
 	"net/http"
 
 	"github.com/gin-gonic/gin"

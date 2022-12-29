@@ -45,6 +45,8 @@ func (s *sqlStore) ListDataWithCondition(
 		} else {
 			db = db.Order("id desc")
 		}
+	} else {
+		db = db.Order("id desc")
 	}
 
 	if err := db.Count(&paging.Total).Error; err != nil {

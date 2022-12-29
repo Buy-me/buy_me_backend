@@ -7,13 +7,13 @@ import (
 	"log"
 )
 
-func (s *sqlStore) CreateFoodRating(context context.Context, data *foodmodel.FoodRating) error {
+func (s *sqlStore) CreateFoodRating(context context.Context, data *foodmodel.FoodRatingCreate) error {
 
 	if err := s.db.Create(&data).Error; err != nil {
 		return common.ErrDB(err)
 	}
 
-	go func(data *foodmodel.FoodRating) {
+	go func(data *foodmodel.FoodRatingCreate) {
 		var food foodmodel.Food
 
 		if err := s.db.Where("id = ?", data.FoodId).First(&food).Error; err != nil {
@@ -21,8 +21,7 @@ func (s *sqlStore) CreateFoodRating(context context.Context, data *foodmodel.Foo
 			return
 		}
 
-		log.Println(food.Rating, food.CountRating)
-
+		
 		newCountRating := food.CountRating + 1
 		newRating := ((food.Rating * float64(food.CountRating)) + data.Rating) / (float64(newCountRating))
 

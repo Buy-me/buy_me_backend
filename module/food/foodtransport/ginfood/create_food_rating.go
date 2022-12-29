@@ -24,7 +24,7 @@ func CreateFoodRating(appCtx appctx.AppContext) gin.HandlerFunc {
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
-		var data foodmodel.FoodRating
+		var data foodmodel.FoodRatingCreate
 
 		if err := c.ShouldBind(&data); err != nil {
 

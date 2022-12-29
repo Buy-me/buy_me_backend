@@ -1,5 +1,5 @@
 package ordermodel
 
 type Filter struct {
-	OwnerId int `json:"owner_id,omitempty" form:"owner_id"`
+	UserId int `json:"user_id,omitempty" form:"user_id"`
 }

@@ -7,7 +7,7 @@ import (
 )
 
 type CreateFoodRatingStore interface {
-	CreateFoodRating(context context.Context, data *foodmodel.FoodRating) error
+	CreateFoodRating(context context.Context, data *foodmodel.FoodRatingCreate) error
 }
 
 type createFoodRatingBiz struct {
@@ -18,7 +18,7 @@ func NewCreateFoodRatingBiz(store CreateFoodRatingStore) *createFoodRatingBiz {
 	return &createFoodRatingBiz{store: store}
 }
 
-func (biz *createFoodRatingBiz) CreateFoodRating(context context.Context, data *foodmodel.FoodRating) error {
+func (biz *createFoodRatingBiz) CreateFoodRating(context context.Context, data *foodmodel.FoodRatingCreate) error {
 
 	if err := biz.store.CreateFoodRating(context, data); err != nil {
 		return common.ErrCannotCreateEntity(foodmodel.EntityName, err)

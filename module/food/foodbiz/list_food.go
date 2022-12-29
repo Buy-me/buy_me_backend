@@ -44,22 +44,5 @@ func (biz *listFoodBiz) ListFood(
 		return nil, err
 	}
 
-	// ids := make([]int, len(result))
-
-	// for i := range result {
-	// 	ids[i] = result[i].Id
-	// }
-
-	// likeMap, err := biz.likeStore.GetRestaurantLikes(context, ids)
-
-	// if err != nil {
-	// 	log.Println("Something went wrong")
-	// 	return result, nil
-	// }
-
-	// for i, item := range result {
-	// 	result[i].LikedCount = likeMap[item.Id]
-	// }
-
 	return result, nil
 }

@@ -18,14 +18,14 @@ func (s *sqlStore) ListDataWithCondition(
 	//or (1,2,3)
 	db := s.db.Table(ordermodel.Order{}.TableName()).Where("status in (1)")
 
-	// if filter != nil {
-	// 	if filter.OwnerId > 0 {
-	// 		db = db.Where("user_id = ?", filter.OwnerId)
-	// 	}
-	// }
-
 	if err := db.Count(&paging.Total).Error; err != nil {
 		return nil, common.ErrDB(err)
+	}
+
+	if filter != nil {
+		if filter.UserId > 0 {
+			db = db.Where("user_id = ?", filter.UserId)
+		}
 	}
 
 	for i := range moreKeys {

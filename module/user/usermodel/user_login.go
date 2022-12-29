@@ -20,4 +20,10 @@ var (
 		"username or password invalid",
 		"ErrUsernameOrPasswordInvalid",
 	)
+
+	ErrPasswordInvalid = common.NewCustomError(
+		errors.New("password invalid"),
+		"password invalid",
+		"ErrPasswordInvalid",
+	)
 )

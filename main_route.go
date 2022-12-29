@@ -27,6 +27,8 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 	v1.POST("/register", ginuser.Register(appContext))
 	v1.POST("/authenticate", ginuser.LoginHandler(appContext))
 	v1.GET("/profile", middleware.RequiredAuth(appContext), ginuser.Profile(appContext))
+	v1.PATCH("/change-password", middleware.RequiredAuth(appContext), ginuser.ChangePassword(appContext))
+	v1.GET("/forgot-password", middleware.RequiredAuth(appContext), ginuser.ForgotPassword(appContext))
 	v1.GET("/my-cart", middleware.RequiredAuth(appContext), ginuser.GetCart(appContext))
 	v1.GET("/my-favourite", middleware.RequiredAuth(appContext), ginuser.GetFavourite(appContext))
 	v1.GET("/my-address", middleware.RequiredAuth(appContext), ginuser.GetAddresses(appContext))
@@ -35,6 +37,7 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 	user := v1.Group("/users", middleware.RequiredAuth(appContext))
 	{
 		user.GET("", ginuser.ListUser(appContext))
+
 	}
 
 	restaurant := v1.Group("/restaurants", middleware.RequiredAuth(appContext))

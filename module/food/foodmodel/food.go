@@ -47,8 +47,6 @@ type FoodUpdate struct {
 	Description string        `json:"description" gorm:"column:description;"`
 }
 
-
-
 func (FoodUpdate) TableName() string {
 	return Food{}.TableName()
 }

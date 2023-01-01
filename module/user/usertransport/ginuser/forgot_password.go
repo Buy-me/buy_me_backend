@@ -5,7 +5,6 @@ import (
 	"food_delivery/component/appctx"
 	"food_delivery/component/hasher"
 	"food_delivery/module/user/userbusiness"
-	"food_delivery/module/user/usermodel"
 	"food_delivery/module/user/userstorage"
 
 	"net/http"
@@ -17,17 +16,22 @@ func ForgotPassword(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := appCtx.GetMainDBConnection()
 
-		requester := c.MustGet(common.CurrentUser).(common.Requester)
-		user := c.MustGet(common.CurrentUser).(*usermodel.User)
+		type ForgotPassword struct {
+			Email string `json:"email"`
+		}
 
+		var body ForgotPassword
+
+		if err := c.ShouldBind(&body); err != nil {
+			panic(common.ErrInvalidRequest(err))
+		}
+
+		
 		store := userstorage.NewSQLStore(db)
 		md5 := hasher.NewMd5Hash()
-		biz := userbusiness.NewForgotPasswordBiz(store, user, md5)
+		biz := userbusiness.NewForgotPasswordBiz(store, md5)
 
-		var data usermodel.UserUpdate
-		data.Password = "20222023"
-
-		err := biz.ForgotPassword(c.Request.Context(), data, requester.GetUserId())
+		err := biz.ForgotPassword(c.Request.Context(), body.Email)
 
 		if err != nil {
 			panic(err)

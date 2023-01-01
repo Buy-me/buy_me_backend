@@ -16,6 +16,10 @@ func (s *sqlStore) ListFoodRating(context context.Context, foodId int, moreKeys 
 		db = db.Where("food_id = ?", foodId)
 	}
 
+	for i := range moreKeys {
+		db = db.Preload(moreKeys[i])
+	}
+
 	if err := db.Find(&result).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}

@@ -12,10 +12,15 @@ type User struct {
 	Phone           string        `json:"phone" gorm:"column:phone;"`
 	Avatar          *common.Image `json:"avatar,omitempty" gorm:"column:avatar;type:json"`
 }
+
+func (User) TableName() string {
+	return "users"
+}
+
 type FoodRating struct {
 	common.SQLModel `json:",inline"`
 	UserId          int     `json:"user_id" gorm:"column:user_id;"`
-	User            User    `json:"user" gorm:"-"`
+	User            *User   `json:"user" gorm:"-"`
 	FoodId          int     `json:"food_id" gorm:"column:food_id;"`
 	Rating          float64 `json:"rating" gorm:"column:point;"`
 	Comment         string  `json:"comment" gorm:"column:comment;"`

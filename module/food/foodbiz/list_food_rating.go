@@ -28,7 +28,7 @@ func NewListFoodRatingBiz(store ListFoodRatingStore) *listFoodRatingBiz {
 // Dinh Nghia Chuc Nang Cho Transport Su Dung
 func (biz *listFoodRatingBiz) ListFoodRating(context context.Context, foodId int) ([]foodmodel.FoodRating, error) {
 
-	result, err := biz.store.ListFoodRating(context, foodId, "User")
+	result, err := biz.store.ListFoodRating(context, foodId)
 
 	if err != nil {
 		return nil, err

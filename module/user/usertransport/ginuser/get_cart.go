@@ -35,7 +35,7 @@ func GetCart(appCtx appctx.AppContext) gin.HandlerFunc {
 		}
 
 		var carts []cartmodel.Cart
-		err = db.Where("food_id in (?) and status in (1)", arrIds).Find(&carts).Error
+		err = db.Where("food_id in (?) and status in (1) and user_id = ?", arrIds, requester.GetUserId()).Find(&carts).Error
 
 		for index := range carts {
 			carts[index].Food = &listFood[index]

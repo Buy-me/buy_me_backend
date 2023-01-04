@@ -28,7 +28,7 @@ func NewGetOrderBiz(store GetOrderStore) *getOrderBiz {
 func (biz *getOrderBiz) GetOrder(context context.Context, id int) (*ordermodel.Order, error) {
 	// oldData, err := biz.store.FindDataWithCondition(context, map[string]interface{}{"id": id})
 
-	order, err := biz.store.FindDataWithCondition(context, map[string]interface{}{"id": id})
+	order, err := biz.store.FindDataWithCondition(context, map[string]interface{}{"id": id}, "Items")
 
 	if err != nil {
 		return nil, common.ErrEntityNotFound(ordermodel.EntityName, err)

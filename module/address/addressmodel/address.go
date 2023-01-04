@@ -12,6 +12,7 @@ type Address struct {
 	UserId          int    `json:"-" gorm:"column:user_id;"`
 	Title           string `json:"title" gorm:"column:title;"`
 	Address         string `json:"address" gorm:"column:addr;"`
+	Phone           string `json:"phone" gorm:"column:phone;"`
 }
 
 func (Address) TableName() string {
@@ -23,6 +24,7 @@ type AddressCreate struct {
 	UserId          int    `json:"-" gorm:"column:user_id;"`
 	Title           string `json:"title" gorm:"column:title;"`
 	Address         string `json:"address" gorm:"column:addr;"`
+	Phone           string `json:"phone" gorm:"column:phone;"`
 }
 
 func (AddressCreate) TableName() string {

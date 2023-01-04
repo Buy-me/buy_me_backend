@@ -15,7 +15,7 @@ func (s *sqlStore) FindDataWithCondition(
 ) (*ordermodel.Order, error) {
 
 	var data ordermodel.Order
-	
+
 	db := s.db.Table(ordermodel.Order{}.TableName())
 
 	db = db.Preload("Items")

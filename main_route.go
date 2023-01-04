@@ -4,6 +4,7 @@ import (
 	"food_delivery/component/appctx"
 	"food_delivery/middleware"
 	"food_delivery/module/address/addresstransport/ginaddress"
+	"food_delivery/module/card/cardstransport/gincard"
 	"food_delivery/module/cart/carttransport/gincart"
 	"food_delivery/module/category/categorytransport/gincategory"
 	"food_delivery/module/favourite/favouritetransport/ginfavourite"
@@ -23,21 +24,30 @@ import (
 func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 
 	db := appContext.GetMainDBConnection()
+
+	// Un Auth
 	v1.POST("/upload", ginupload.Upload(appContext))
 	v1.POST("/register", ginuser.Register(appContext))
 	v1.POST("/authenticate", ginuser.LoginHandler(appContext))
 	v1.POST("/forgot-password", ginuser.ForgotPassword(appContext))
+
+	// Profile
 	v1.GET("/profile", middleware.RequiredAuth(appContext), ginuser.Profile(appContext))
+	v1.PATCH("/profile", middleware.RequiredAuth(appContext), ginuser.UpdateProfile(appContext))
 	v1.PATCH("/change-password", middleware.RequiredAuth(appContext), ginuser.ChangePassword(appContext))
+
+	// My Information
 	v1.GET("/my-cart", middleware.RequiredAuth(appContext), ginuser.GetCart(appContext))
 	v1.GET("/my-favourite", middleware.RequiredAuth(appContext), ginuser.GetFavourite(appContext))
 	v1.GET("/my-address", middleware.RequiredAuth(appContext), ginuser.GetAddresses(appContext))
+	v1.GET("/my-card", middleware.RequiredAuth(appContext), ginuser.GetCard(appContext))
 	v1.GET("/my-order", middleware.RequiredAuth(appContext), ginorder.ListUserOrder(appContext))
 
 	user := v1.Group("/users", middleware.RequiredAuth(appContext))
 	{
 		user.GET("", ginuser.ListUser(appContext))
-
+		user.GET("/:id", ginuser.GetUser(appContext))
+		user.DELETE("/:id", ginuser.DeleteUser(appContext))
 	}
 
 	restaurant := v1.Group("/restaurants", middleware.RequiredAuth(appContext))
@@ -131,6 +141,7 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 		order.GET("/:id", ginorder.GetOrder(appContext))
 		order.DELETE("/:id", ginorder.DeleteOrder(appContext))
 		order.PATCH("/:id", ginorder.UpdateOrder(appContext))
+		order.GET("/list-order/:userId", ginorder.ListUserOrderByUserId(appContext))
 	}
 
 	cart := v1.Group("/carts", middleware.RequiredAuth(appContext))
@@ -150,6 +161,11 @@ func setUpRoutes(appContext appctx.AppContext, v1 *gin.RouterGroup) {
 	{
 		address.POST("", ginaddress.CreateAddress(appContext))
 		address.DELETE("/:id", ginaddress.DeleteAddress(appContext))
+	}
+
+	card := v1.Group("/cards", middleware.RequiredAuth(appContext))
+	{
+		card.POST("", gincard.CreateCard(appContext))
 	}
 
 	// v1/restaurants/:id/liked-users

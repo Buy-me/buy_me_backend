@@ -3,6 +3,7 @@ package usermodel
 import (
 	"food_delivery/common"
 	"food_delivery/module/address/addressmodel"
+	"food_delivery/module/card/cardmodel"
 	"food_delivery/module/food/foodmodel"
 )
 
@@ -15,12 +16,15 @@ type User struct {
 	Salt            string                 `json:"-" gorm:"column:salt;"`
 	LastName        string                 `json:"last_name" gorm:"column:last_name;"`
 	FirstName       string                 `json:"first_name" gorm:"column:first_name;"`
+	Gender          string                 `json:"gender" gorm:"column:gender;"`
+	BirthDate       string                 `json:"birth_date" gorm:"column:birth_date;"`
 	Phone           string                 `json:"phone" gorm:"column:phone;"`
 	Role            string                 `json:"role" gorm:"column:role;type:ENUM('user', 'admin')"`
 	Avatar          *common.Image          `json:"avatar,omitempty" gorm:"column:avatar;type:json"`
 	ListFoodInCart  []foodmodel.Food       `json:"items" gorm:"many2many:carts;"`
 	ListFavourite   []foodmodel.Food       `json:"favourites" gorm:"many2many:favourites;"`
 	ListAddress     []addressmodel.Address `json:"addresses"`
+	ListCard        []cardmodel.Card       `json:"cards"`
 }
 
 func (u *User) Mask(isAdminOrOwner bool) {
